@@ -40,7 +40,7 @@ const _areErrorsBlocking = function( errors )
 
 	const thisError = errors[ 0 ];
 
-	var blocking = false;
+	var blocking = true;
 
 	switch( thisError.reason ) 
 	{

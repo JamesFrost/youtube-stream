@@ -33,10 +33,8 @@ const _handleResponse = function( err, response, callback )
 		return;
 	}
 
-	response.items.map(function( thisMessage )
-	{
-		callback( err, thisMessage );
-	});
+	if( response.items.length > 0 )
+		callback( undefined, response.items );
 };
 
 const _getOAuthClient = function( oauth )
