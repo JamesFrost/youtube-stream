@@ -10,13 +10,15 @@ const _step = function( auth, liveChatId, pageToken, callback )
 {
 	_getMessages(auth, liveChatId, pageToken, function( err, response )
 	{
-		callback( err, response );
-
-		if( err )
+		if( err && _areErrorsBlocking( err.errors ) )
 		{
-			console.log( err );
+			callback( err, undefined );
+			return;
 		}
-		
+
+		if( response !== undefined )
+			callback( undefined, response );
+
 		const pollingInterval = response == undefined ? 10000 : response.pollingIntervalMillis;
 		const pageToken = response == undefined ? undefined : response.nextPageToken;
 
@@ -28,9 +30,38 @@ const _step = function( auth, liveChatId, pageToken, callback )
 			_step( auth, liveChatId, pageToken, callback );
 
 		}, pollingInterval);
-
-		console.log( 'Polling in: ', pollingInterval );
 	});
+};
+
+const _areErrorsBlocking = function( errors )
+{
+	if( errors.length === 0 )
+		return false;
+
+	const thisError = errors[ 0 ];
+
+	var blocking = false;
+
+	switch( thisError.reason ) 
+	{
+	    case 'liveChatDisabled':
+	   		blocking = true;
+	   		break;
+	   	case 'rateLimitExceeded': 
+	   		blocking = false;
+	   		break;
+	   	case 'liveChatNotFound':
+	   		blocking = true;
+	   		break;
+	   	case 'forbidden':
+	   		blocking = true;
+	   		break;
+	   	case 'liveChatEnded':
+	   		blocking = true;
+	   		break;
+	}
+
+	return _areErrorsBlocking( errors.slice( 1 ) ) || blocking;
 };
 
 const _getMessages = function( accessToken, liveChatId, pageToken, callback )

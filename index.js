@@ -8,11 +8,11 @@ exports.connect = function( oauth, accessToken, liveChatId, callback )
 	  access_token: accessToken
 	});
 
-	const _responseHandler = _curryHandleResponse( callback );
+	const responseHandler = _curryHandleResponse( callback );
 
 	const stream = require( './src/stream.js' );
 
-	stream._init( oauthClient, liveChatId, _responseHandler );
+	stream._init( oauthClient, liveChatId, responseHandler );
 
 	return stream;
 };
@@ -41,5 +41,5 @@ const _handleResponse = function( err, response, callback )
 
 const _getOAuthClient = function( oauth )
 {
-	return new _oauth(oauth.client_id, oauth.client_secret, oauth.redirect_uris[0]);
+	return new _oauth( oauth.client_id, oauth.client_secret, oauth.redirect_uris[0] );
 };
