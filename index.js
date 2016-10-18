@@ -1,11 +1,14 @@
 const _oauth = require( 'googleapis' ).auth.OAuth2;
 
-exports.connect = function( oauth, accessToken, liveChatId, callback )
+exports.connect = function( oauth, youtubeCreds, liveChatId, callback )
 {
+	console.log('CONNECT');
 	const oauthClient = _getOAuthClient( oauth );
 
 	oauthClient.setCredentials({
-	  access_token: accessToken
+	  access_token: youtubeCreds.access_token,
+	  refresh_token: youtubeCreds.refresh_token,
+	  expiry_token: youtubeCreds.token_expiry
 	});
 
 	const responseHandler = _curryHandleResponse( callback );
@@ -32,9 +35,12 @@ const _handleResponse = function( err, response, callback )
 		callback( err );
 		return;
 	}
-
-	if( response.items.length > 0 )
-		callback( undefined, response.items );
+	
+	console.log('response');
+	console.log(response);
+	
+	//if( response.items.length > 0 )
+	//	callback( undefined, response.items );
 };
 
 const _getOAuthClient = function( oauth )
