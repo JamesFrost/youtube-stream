@@ -9,7 +9,7 @@ exports._init = function( auth, liveChatId, callback )
 const _step = function( auth, liveChatId, pageToken, callback )
 {
 	_getMessages(auth, liveChatId, pageToken, function( err, response )
-	{
+	{	
 		if( err )
 		{
 			if(err.errors[0].reason === 'authError')
@@ -23,7 +23,7 @@ const _step = function( auth, liveChatId, pageToken, callback )
 			}
 		}
 		
-		if( response !== undefined )
+		if( response !== undefined && response.items.length > 0)
 			callback( undefined, response );
 
 		const pollingInterval = response == undefined ? 10000 : response.pollingIntervalMillis;
@@ -78,8 +78,7 @@ const _getMessages = function( accessToken, liveChatId, pageToken, callback )
 
 const _refreshToken = function(auth, callback)
 {	
-	console.log('REFRESH');
-	auth.refreshAccessToken(function(err, tokens, callback) {
+	auth.refreshAccessToken(function(err, tokens) {
 	  // your access_token is now refreshed and stored in oauth2Client
 	  // store these new tokens in a safe place (e.g. database)
 	  if(err)
