@@ -23,7 +23,7 @@ const _step = function( auth, liveChatId, pageToken, callback )
 			}
 		}
 		
-		if( response !== undefined && response.items.length > 0)
+		if( (response && response.items) && response.items.length > 0)
 			callback( undefined, response );
 
 		const pollingInterval = response == undefined ? 10000 : response.pollingIntervalMillis;
